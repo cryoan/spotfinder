@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Flask app</title>
+    
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/main.css') }}"
+    />
+    <link
+      rel="shortcut icon"
+      href="{{ url_for('static', filename='wave.ico') }}"
+    />
+    <script
+      src="https://kit.fontawesome.com/715aafcf0b.js"
+      crossorigin="anonymous"
+    ></script>
+  
+  </head>
+
+  <h1>The best spots for today are:</h1>
+
+  <!-- {% for spot in best_spot_name %}
+<p>{{ spot }}</p>
+{% endfor %} -->
+
+  {% for cond in best_spots_list %}
+
+  <div class="card">
+    <div class="card-header">
+      <b>{{cond.time}}</b>
+      <div class="conditions">
+      
+
+        <p>
+          <!-- <i class="fa-solid fa-wave-square color_blue"></i> -->
+          <!-- <i class="fa-solid fa-chart-simple color_blue"></i> -->
+          <div class="flex_col">
+            
+            <div class="tide_chart">
+              <div class="tide tide1" style="background:{{cond.tide_diagramm[0]}}"></div>
+              <div class="tide tide2" style="background:{{cond.tide_diagramm[1]}}"></div>
+              <div class="tide tide3" style="background:{{cond.tide_diagramm[2]}}"></div>
+              <div class="tide tide4" style="background:{{cond.tide_diagramm[3]}}"></div>
+              <div class="tide tide5" style="background:{{cond.tide_diagramm[4]}}"></div>
+              <div class="tide tide6" style="background:{{cond.tide_diagramm[5]}}"></div>
+            </div>
+            <div>
+              {{cond.next_tide[3]}} to {{cond.next_tide[1]}} {{cond.next_tide[0][0]}}
+            </div>
+          
+          </div>
+          
+         
+          <!-- {{cond.tide}}
+          {{cond.tide_dir}} -->
+
+          {% for tide in cond.filtered_maree_info %}
+          <div class="maree_info">
+            {% for tid in tide[1] %}
+            <!-- <div>
+              {{tid[0]}}:{{tid[1]}}
+            </div> -->
+            {% if tid[0]=='PM' %}
+            <div><b>
+              {{tid[1]}}
+            </b></div>
+            {% else %}
+            <div>
+              {{tid[1]}}
+            </div>
+            {% endif %}
+           
+          {% endfor %}
+        </div>
+          {% endfor %}
+        </p>
+        <p>
+          <i class="fa-solid fa-water color_blue" style="color:hsl({{cond.wave_period}}deg, 67%, 78%);"></i>
+          {{cond.wave_height}}m {{cond.wave_period}}s
+        </p>
+
+        <p>
+          <i class="fa-solid fa-wind color_blue"></i>
+          {{cond.wind_dir}} - {{cond.wind_speed}} noeuds
+        </p>
+       
+        <p style="transform: rotate({{cond.wind_dir_deg+90}}deg);">
+          <i class="fa-solid fa-arrow-right color_blue"></i>
+          <!-- <div class="line"></div>
+          <div class="point"></div> -->
+          </p>
+
+        {% if cond.is_cloudy %}
+        <p>
+          <i class="fa-solid fa-cloud color_grey"></i>
+          {{cond.clouds}}%
+        </p>
+        {% else %}
+        <p>
+          <i class="fa-solid fa-sun color_yellow"></i>
+        </p>
+        {% endif %} {% if cond.is_raining %}
+        <p>
+          <i class="fa-solid fa-cloud-rain color_blue"></i>
+          {{cond.rain}} mm/h
+        </p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="spot">
+        {% for key, spot in cond.spot.iterrows() %}
+        <ul>
+          <div class="flex_row">
+           {% if spot.is_swim %}
+           <i class="fa-solid fa-person-swimming"></i>
+
+        
+         {% else %}
+         <img src="{{ url_for('static', filename='sea.png') }}" width="1.5%" alt=""/>
+
+         {% endif %}
+            <div> {{spot["name"]}}</div>
+           
+        
+            <div id="container" style="position:relative;">
+              <div id="div1">
+                <div class="shoreline" style="transform: rotate({{spot["orientation"]+90}}deg);">
+              </div>
+              <div id="div2" style="position:absolute; top:2px; left:10px;">
+                <div style="transform: rotate({{cond.wind_dir_deg+90}}deg);">
+                  <i class="fa-solid fa-arrow-right color_blue"></i>
+                
+                </div>
+              </div>
+             
+              
+          </div>
+          </div>
+        </div>
+        </ul>
+        {% endfor %}
+        
+
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</html>
